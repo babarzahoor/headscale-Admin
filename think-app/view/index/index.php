@@ -41,8 +41,8 @@
 <canvas class="background"></canvas>
 
 <ul class="layui-nav">
-  <li class="layui-nav-item"><a href="">headscale-Admin</a></li>
-  <li class="layui-nav-item"><a href="https://www.runyf.cn">about</a></li>
+  <li class="layui-nav-item"><a href="">异地组网中心</a></li>
+  <li class="layui-nav-item"><a href="https://www.runyf.cn">关于</a></li>
 
   <!-- <li class="layui-nav-item"><a href="">菜单3</a></li> -->
 </ul>
@@ -59,7 +59,7 @@
       <div class="layui-card">
         <div class="layui-card-header">概述</div>
         <div class="layui-card-body">
-        headscale-Admin异地组网是基于开源项目headscale开发，是一款基于Wireguard协议构建的现代异地组网工具
+           异地组网是基于开源项目headscale开发，是一款基于Wireguard协议构建的现代异地组网工具
         </div>
       </div>
     </div>
@@ -79,7 +79,7 @@
       <div class="layui-card">
         <div class="layui-card-header">速度</div>
         <div class="layui-card-body">
-          90%的情况下可以使用p2p直连，即使失败也可以获得高达200Mbps的中转速率
+          90%的情况下可以使用p2p直连，即使失败也可以获得高达5Mbps的中转速率
         </div>
       </div>
     </div>

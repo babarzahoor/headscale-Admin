@@ -83,8 +83,8 @@
       <!-- 侧边菜单 -->
       <div class="layui-side layui-side-menu">
         <div class="layui-side-scroll">
-          <div class="layui-logo" lay-href="home1/console.html">
-            <span>headscale-Admin</span>
+          <div class="layui-logo" lay-href="admin/console">
+            <span>异地组网</span>
           </div>
 
           <ul class="layui-nav layui-nav-tree" lay-accordion id="LAY-system-side-menu" lay-filter="layadmin-system-side-menu">
