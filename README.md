@@ -6,7 +6,7 @@
 [![platfrom](https://img.shields.io/badge/platform-amd64%20%7C%20arm64-brightgreen)](https://hub.docker.com/r/runyf/hs-admin/tags)
 
 采用Think-php6+layui+flask开发，基于用户的headscale后台管理中心,欢迎点一个Star   
-qq群 892467054
+该项目已暂停更新，请移步至 https://github.com/arounyf/Headscale-Admin-Pro   
 # 时间线
 2024年6月我接触到了tailscale,后在个人博客上发布了derper与headscale的搭建教程   
 2024年9月8日headscale-Admin首个版本正式开源发布
