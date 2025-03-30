@@ -79,7 +79,7 @@
       <div class="layui-card">
         <div class="layui-card-header">速度</div>
         <div class="layui-card-body">
-          90%的情况下可以使用p2p直连，即使失败也可以获得高达5Mbps的中转速率
+          90%的情况下可以使用p2p直连，即使失败也可以获得高达200Mbps的中转速率
         </div>
       </div>
     </div>
