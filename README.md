@@ -1,75 +1,187 @@
+# Headscale Admin Panel
 
-# 介绍
-[![GitHub repo size](https://img.shields.io/github/repo-size/arounyf/headscale-Admin)](https://github.com/arounyf/headscale-Admin)
-[![Docker Image Size](https://img.shields.io/docker/image-size/runyf/hs-admin)](https://hub.docker.com/r/runyf/hs-admin)
-[![docker pulls](https://img.shields.io/docker/pulls/runyf/hs-admin.svg?color=brightgreen)](https://hub.docker.com/r/runyf/hs-admin)
-[![platfrom](https://img.shields.io/badge/platform-amd64%20%7C%20arm64-brightgreen)](https://hub.docker.com/r/runyf/hs-admin/tags)
+A modern, English-language web administration panel for [Headscale](https://github.com/juanfont/headscale), built with React, TypeScript, Vite, and Supabase.
 
-采用Think-php6+layui+flask开发，基于用户的headscale后台管理中心,欢迎点一个Star   
-该项目已暂停更新，请移步至 https://github.com/arounyf/Headscale-Admin-Pro   
-# 时间线
-2024年6月我接触到了tailscale,后在个人博客上发布了derper与headscale的搭建教程   
-2024年9月8日headscale-Admin首个版本正式开源发布
-# 安装
-### 传统安装
- 1. 安装php-composer
- 2. 使用composer安装think-captcha
- 3. 安装psql驱动
-### 使用docker部署（推荐）
-1. 首先需要部署headscale，请查看 /headscale/docker-compose.yml
-```shell
-cd
-git clone https://github.com/arounyf/headscale-Admin.git hs-admin
-cd hs-admin/headscale
-docker-compose up -d
-cd ..
-docker-compose up -d
+## Features
+
+### Core Features
+- **User Management** - Create, edit, and manage user accounts (Admin only)
+- **Self-Registration** - Allow users to register their own accounts
+- **User Expiration** - Set expiration dates for user accounts
+- **Traffic Statistics** - Monitor network usage and traffic
+- **Access Control Lists (ACL)** - User-based network permissions with JSON editor
+- **Node Management** - View and manage connected devices
+- **Route Management** - Configure network routes with enable/disable controls
+- **Log Management** - View system logs and activities
+- **Pre-authentication Keys** - Generate and manage keys for device enrollment
+- **Role Management** - Admin and regular user roles with different permissions
+
+### Modern UI/UX
+- Clean, modern interface with Tailwind CSS
+- Responsive design for mobile, tablet, and desktop
+- Real-time data updates
+- Smooth animations and transitions
+
+### Technology Stack
+- **Frontend**: React 18, TypeScript, Vite
+- **UI Framework**: Tailwind CSS
+- **Icons**: Lucide React
+- **Backend**: Supabase (Database + Authentication)
+- **Routing**: React Router v6
+
+## Getting Started
+
+### Prerequisites
+- Node.js 18+ and npm
+- A Supabase account and project
+- A Headscale instance (v0.22.3+ recommended)
+
+### Installation
+
+1. **Clone the repository**
+   ```bash
+   git clone <your-repo-url>
+   cd headscale-admin
+   ```
+
+2. **Install dependencies**
+   ```bash
+   npm install
+   ```
+
+3. **Configure environment variables**
+
+   The `.env` file should contain:
+   ```env
+   VITE_SUPABASE_URL=your_supabase_project_url
+   VITE_SUPABASE_SUPABASE_ANON_KEY=your_supabase_anon_key
+   ```
+
+4. **Set up the database**
+
+   The database schema is automatically set up through Supabase. The schema includes:
+   - User profiles with role-based access control
+   - Nodes (connected devices)
+   - Routes (network routes)
+   - ACLs (access control lists)
+   - Pre-authentication keys
+   - Activity logs
+   - Headscale configuration
+
+   All tables have Row Level Security (RLS) enabled with appropriate policies.
+
+5. **Start the development server**
+   ```bash
+   npm run dev
+   ```
+
+6. **Build for production**
+   ```bash
+   npm run build
+   ```
+
+## Usage
+
+### First Time Setup
+
+1. **Register an Account**
+   - Navigate to `/register`
+   - Create your account with username, email, and password
+   - By default, new users have the 'user' role
+
+2. **Promote to Admin** (if needed)
+   - Use Supabase dashboard to manually set the first user's role to 'admin'
+   - Go to the `user_profiles` table
+   - Update the `role` field to 'admin'
+
+3. **Configure Headscale Integration** (coming soon)
+   - Navigate to Settings as an admin
+   - Add your Headscale API URL and API key
+
+### User Roles
+
+**Admin**
+- Full access to all features
+- Can manage all users
+- Can view and manage all nodes, routes, and ACLs
+- Can view all activity logs
+
+**User**
+- Can manage their own nodes, routes, and ACLs
+- Can generate pre-authentication keys
+- Can view their own activity logs
+- Cannot access user management
+
+### Connecting Devices
+
+1. Generate a pre-authentication key from the "Pre-auth Keys" page
+2. Install Tailscale on your device
+3. Connect using:
+   ```bash
+   tailscale up --login-server=YOUR_HEADSCALE_URL --authkey=YOUR_KEY
+   ```
+
+## Database Schema
+
+### Tables
+
+- **user_profiles** - User accounts and settings
+- **nodes** - Connected devices
+- **routes** - Network routes
+- **acls** - Access control lists
+- **preauth_keys** - Pre-authentication keys for device enrollment
+- **activity_logs** - System activity logs
+- **headscale_config** - Headscale API configuration
+
+### Security
+
+- All tables have Row Level Security (RLS) enabled
+- Users can only access their own data
+- Admins can access all data
+- Secure password authentication through Supabase Auth
+
+## Development
+
+### Project Structure
+
 ```
-2. 修改配置文件
-```shell
-vim headscale/config.yml
-cd think-app
-cp .example.env .env
-vim .env
+src/
+├── components/          # Reusable components
+│   └── Layout.tsx      # Main app layout with sidebar
+├── contexts/           # React contexts
+│   └── AuthContext.tsx # Authentication context
+├── lib/                # Utilities and configurations
+│   └── supabase.ts    # Supabase client and types
+├── pages/              # Application pages
+│   ├── Login.tsx
+│   ├── Register.tsx
+│   ├── Dashboard.tsx
+│   ├── Nodes.tsx
+│   ├── Routes.tsx
+│   ├── ACLs.tsx
+│   ├── PreauthKeys.tsx
+│   ├── Logs.tsx
+│   ├── Users.tsx
+│   ├── Profile.tsx
+│   └── Settings.tsx
+├── App.tsx             # Main app component
+├── main.tsx            # App entry point
+└── index.css           # Global styles
 ```
-- *.env 参数说明*
-- TOKEN 使用此命令创建apikey `docker exec -it headscale headscale apikey create` 
 
+### Available Scripts
 
-3. 初始化sqlite数据库   
+- `npm run dev` - Start development server
+- `npm run build` - Build for production
+- `npm run preview` - Preview production build
 
-`curl 172.17.0.1:8011/install`
-访问 http://172.17.0.1:8011/install   （替换成你自己的ip）  
+## Credits
 
-4. 打开管理后台中心   
+This is a modern English rewrite of the original [Headscale-Admin](https://github.com/arounyf/headscale-Admin) project by arounyf.
 
-`curl 172.17.0.1:8011`
-访问 http://172.17.0.1:8011   （替换成你自己的ip）  
+## License
 
-系统默认账户密码  admin 999888
-
-# 功能
-- 用户管理
-- 用户自行注册
-- 用户到期管理
-- 流量统计
-- 基于用户ACL
-- 节点管理
-- 路由管理
-- 日志管理
-- 预认证密钥管理
-- 角色管理
-- api和menu权限管理
-- 支持postsql与sqlite数据库
-# 兼容性
-仅通过headscale:v0.22.3测试
-
-# 系统截图
-
-![console](https://github.com/user-attachments/assets/6e25da2f-39f9-4217-b79e-344221c8f816)
-![user](https://github.com/user-attachments/assets/1906c6ec-eb6f-44b1-af88-237ec16f1e99)
-![reg](https://github.com/user-attachments/assets/59a43c57-682a-4cfd-83c0-8aa3d48a3d67)
-![login](https://github.com/user-attachments/assets/e3d4029f-cc08-41e7-8dec-7cae4748a761)
+This project is open source and available under the MIT License
 
 
 
