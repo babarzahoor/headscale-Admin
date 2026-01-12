@@ -1,14 +1,60 @@
-services:  
-  php:  
-    image: runyf/hs-admin:v1.0
-    container_name: hs-admin  
-    network_mode: bridge
-    restart: unless-stopped  
-    ports:  
-      - "8011:8000"  
-    volumes:  
-      - ~/hs-admin/think-app:/var/www/html
-      - ~/hs-admin/headscale/config:/headscale/config
-      - ~/hs-admin/headscale/data:/headscale/data
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:14
+    container_name: headscale-postgres
     environment:
-      - TZ=Asia/Shanghai
+      POSTGRES_DB: headscale
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: pVMnj2IXMtXcfmFTgVI8F8uxLNAiLXphxhgwPs
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./postgres/data:/var/lib/postgresql/data
+      - ./postgres/postgres.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - headscale-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  php:
+    build: .
+    container_name: headscale-php
+    working_dir: /var/www/html
+    volumes:
+      - ./think-app:/var/www/html
+      - ./headscale/config:/headscale/config
+      - ./headscale/data:/headscale/data
+    environment:
+      TZ: Asia/Shanghai
+    networks:
+      - headscale-network
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: unless-stopped
+    expose:
+      - "8000"
+
+  nginx:
+    image: nginx:alpine
+    container_name: headscale-nginx
+    ports:
+      - "8080:80"
+    volumes:
+      - ./think-app:/var/www/html
+      - ./nginx-php.conf:/etc/nginx/conf.d/default.conf
+    networks:
+      - headscale-network
+    depends_on:
+      - php
+    restart: unless-stopped
+
+networks:
+  headscale-network:
+    driver: bridge

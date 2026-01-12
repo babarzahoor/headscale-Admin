@@ -1,40 +1,31 @@
-# Headscale Admin Panel
+# Headscale Admin Panel (PHP Edition)
 
-A modern, English-language web administration panel for [Headscale](https://github.com/juanfont/headscale), built with React, TypeScript, Vite, and Supabase.
+A web administration panel for [Headscale](https://github.com/juanfont/headscale), built with PHP (ThinkPHP framework) and PostgreSQL, running on Docker.
 
 ## Features
 
 ### Core Features
-- **User Management** - Create, edit, and manage user accounts (Admin only)
-- **Self-Registration** - Allow users to register their own accounts
-- **User Expiration** - Set expiration dates for user accounts
-- **Traffic Statistics** - Monitor network usage and traffic
-- **Access Control Lists (ACL)** - User-based network permissions with JSON editor
-- **Node Management** - View and manage connected devices
-- **Route Management** - Configure network routes with enable/disable controls
-- **Log Management** - View system logs and activities
-- **Pre-authentication Keys** - Generate and manage keys for device enrollment
-- **Role Management** - Admin and regular user roles with different permissions
-
-### Modern UI/UX
-- Clean, modern interface with Tailwind CSS
-- Responsive design for mobile, tablet, and desktop
-- Real-time data updates
-- Smooth animations and transitions
+- **User Management** - Create, edit, and manage user accounts with role-based permissions
+- **Node Management** - View and manage connected Headscale devices
+- **Route Management** - Configure and control network routes
+- **Access Control Lists (ACL)** - Manage network permissions with ACL editor
+- **Pre-authentication Keys** - Generate and manage device enrollment keys
+- **Activity Logs** - View system logs and user activities
+- **Role-Based Access Control** - Manager and user roles with different permissions
+- **Command Console** - Execute Headscale commands directly from the web interface
 
 ### Technology Stack
-- **Frontend**: React 18, TypeScript, Vite
-- **UI Framework**: Tailwind CSS
-- **Icons**: Lucide React
-- **Backend**: Supabase (Database + Authentication)
-- **Routing**: React Router v6
+- **Backend**: PHP 7.4 with ThinkPHP 6.0 framework
+- **Database**: PostgreSQL 14
+- **Web Server**: Nginx
+- **Frontend**: LayUI (Layered Web UI)
+- **Containerization**: Docker & Docker Compose
 
-## Getting Started
+## Quick Start
 
 ### Prerequisites
-- Node.js 18+ and npm
-- A Supabase account and project
-- A Headscale instance (v0.22.3+ recommended)
+- Docker
+- Docker Compose
 
 ### Installation
 
@@ -44,147 +35,258 @@ A modern, English-language web administration panel for [Headscale](https://gith
    cd headscale-admin
    ```
 
-2. **Install dependencies**
+2. **Configure Headscale connection**
+
+   Edit `think-app/.env`:
+   ```ini
+   [HEADSCALE]
+   SERVER = "http://your-headscale-server:8080"
+   TOKEN = "your-headscale-api-token"
+   ACL = "/headscale/config/acl.hujson"
+   ```
+
+3. **Start the services**
    ```bash
-   npm install
+   ./start.sh
    ```
 
-3. **Configure environment variables**
-
-   The `.env` file should contain:
-   ```env
-   VITE_SUPABASE_URL=your_supabase_project_url
-   VITE_SUPABASE_SUPABASE_ANON_KEY=your_supabase_anon_key
-   ```
-
-4. **Set up the database**
-
-   The database schema is automatically set up through Supabase. The schema includes:
-   - User profiles with role-based access control
-   - Nodes (connected devices)
-   - Routes (network routes)
-   - ACLs (access control lists)
-   - Pre-authentication keys
-   - Activity logs
-   - Headscale configuration
-
-   All tables have Row Level Security (RLS) enabled with appropriate policies.
-
-5. **Start the development server**
+   Or manually:
    ```bash
-   npm run dev
+   docker-compose up -d
    ```
 
-6. **Build for production**
-   ```bash
-   npm run build
+4. **Access the application**
+
+   Open your browser and navigate to:
    ```
+   http://localhost:8080
+   ```
+
+5. **First Login**
+
+   Register a new account, then you can start managing your Headscale instance.
+
+## Configuration
+
+### Database Configuration
+
+PostgreSQL settings are in `think-app/.env`:
+
+```ini
+[DATABASE]
+DRIVER = pgsql
+TYPE = pgsql
+HOSTNAME = postgres
+DATABASE = headscale
+USERNAME = postgres
+PASSWORD = pVMnj2IXMtXcfmFTgVI8F8uxLNAiLXphxhgwPs
+HOSTPORT = 5432
+```
+
+### Headscale Integration
+
+Configure the Headscale connection in `think-app/.env`:
+
+```ini
+[HEADSCALE]
+SERVER = "http://headscale:8080"    # Headscale server URL
+TOKEN = "your-api-token-here"        # Headscale API token
+ACL = "/headscale/config/acl.hujson" # ACL file path
+OFFSETIME = false                    # Time offset setting
+```
+
+To get your Headscale API token:
+```bash
+headscale apikeys create
+```
+
+## Services
+
+The Docker Compose setup includes:
+
+- **PostgreSQL** (port 5432) - Database server
+- **PHP-FPM** - PHP application server
+- **Nginx** (port 8080) - Web server
+
+## Database Schema
+
+The PostgreSQL database includes these tables:
+
+- **users** - User accounts with roles and permissions
+- **machines** - Headscale nodes (connected devices)
+- **routes** - Network routes configuration
+- **acls** - Access control lists
+- **pre_auth_keys** - Pre-authentication keys
+- **logs** - Activity and audit logs
+- **menus** - Menu configuration
+- **roles** - Role permissions mapping
+- **apis** - API endpoint permissions
+
+## User Roles
+
+### Manager (Admin)
+- Full access to all features
+- User management
+- View all users' nodes, routes, and logs
+- ACL management
+- System configuration
+
+### User (Regular User)
+- Manage own nodes and routes
+- Generate pre-auth keys
+- View own activity logs
+- Limited system access
 
 ## Usage
 
-### First Time Setup
+### Managing Nodes
 
-1. **Register an Account**
-   - Navigate to `/register`
-   - Create your account with username, email, and password
-   - By default, new users have the 'user' role
+1. Navigate to "Nodes" from the sidebar
+2. View all connected devices
+3. Rename nodes or delete disconnected devices
+4. View node details (IP, OS, client version, last seen)
 
-2. **Promote to Admin** (if needed)
-   - Use Supabase dashboard to manually set the first user's role to 'admin'
-   - Go to the `user_profiles` table
-   - Update the `role` field to 'admin'
+### Managing Routes
 
-3. **Configure Headscale Integration** (coming soon)
-   - Navigate to Settings as an admin
-   - Add your Headscale API URL and API key
+1. Go to "Routes" page
+2. View all advertised routes
+3. Enable or disable routes as needed
+4. Delete unused routes
 
-### User Roles
+### Pre-authentication Keys
 
-**Admin**
-- Full access to all features
-- Can manage all users
-- Can view and manage all nodes, routes, and ACLs
-- Can view all activity logs
-
-**User**
-- Can manage their own nodes, routes, and ACLs
-- Can generate pre-authentication keys
-- Can view their own activity logs
-- Cannot access user management
-
-### Connecting Devices
-
-1. Generate a pre-authentication key from the "Pre-auth Keys" page
-2. Install Tailscale on your device
-3. Connect using:
+1. Navigate to "Pre-auth Keys"
+2. Click "Add Key" to generate a new key
+3. Set expiration time
+4. Copy the key and use it to connect devices:
    ```bash
    tailscale up --login-server=YOUR_HEADSCALE_URL --authkey=YOUR_KEY
    ```
 
-## Database Schema
+### ACL Management
 
-### Tables
+1. Go to "ACL" page
+2. Edit the ACL configuration directly
+3. Save changes to apply new access rules
+4. Reload Headscale configuration if needed
 
-- **user_profiles** - User accounts and settings
-- **nodes** - Connected devices
-- **routes** - Network routes
-- **acls** - Access control lists
-- **preauth_keys** - Pre-authentication keys for device enrollment
-- **activity_logs** - System activity logs
-- **headscale_config** - Headscale API configuration
+### User Management (Manager only)
 
-### Security
+1. Navigate to "Users" page
+2. View all registered users
+3. Change user roles
+4. Set account expiration dates
+5. Enable or disable user accounts
 
-- All tables have Row Level Security (RLS) enabled
-- Users can only access their own data
-- Admins can access all data
-- Secure password authentication through Supabase Auth
-
-## Development
-
-### Project Structure
+## File Structure
 
 ```
-src/
-├── components/          # Reusable components
-│   └── Layout.tsx      # Main app layout with sidebar
-├── contexts/           # React contexts
-│   └── AuthContext.tsx # Authentication context
-├── lib/                # Utilities and configurations
-│   └── supabase.ts    # Supabase client and types
-├── pages/              # Application pages
-│   ├── Login.tsx
-│   ├── Register.tsx
-│   ├── Dashboard.tsx
-│   ├── Nodes.tsx
-│   ├── Routes.tsx
-│   ├── ACLs.tsx
-│   ├── PreauthKeys.tsx
-│   ├── Logs.tsx
-│   ├── Users.tsx
-│   ├── Profile.tsx
-│   └── Settings.tsx
-├── App.tsx             # Main app component
-├── main.tsx            # App entry point
-└── index.css           # Global styles
+.
+├── docker-compose.yml       # Docker Compose configuration
+├── Dockerfile              # PHP container image
+├── nginx-php.conf          # Nginx configuration
+├── start.sh                # Quick start script
+├── stop.sh                 # Stop script
+├── SETUP.md                # Detailed setup guide
+├── think-app/              # PHP application
+│   ├── .env               # Application configuration
+│   ├── app/               # Application code
+│   │   ├── controller/    # Controllers
+│   │   ├── middleware/    # Middleware
+│   │   └── validate/      # Validation rules
+│   ├── config/            # Framework configuration
+│   ├── public/            # Public web files
+│   │   ├── index.php     # Entry point
+│   │   └── res/          # Frontend assets (LayUI)
+│   ├── route/            # Route definitions
+│   └── view/             # View templates
+├── postgres/
+│   ├── postgres.sql       # Database schema
+│   └── data/              # PostgreSQL data directory
+└── headscale/
+    ├── config/            # Headscale configuration
+    └── data/              # Headscale data
+
 ```
 
-### Available Scripts
+## API Endpoints
 
-- `npm run dev` - Start development server
-- `npm run build` - Build for production
-- `npm run preview` - Preview production build
+The application provides these API endpoints:
+
+- `/Api/getUsers` - Get user list
+- `/Api/getMachine` - Get nodes/machines
+- `/Api/getRoute` - Get routes
+- `/Api/getAcls` - Get ACL configuration
+- `/Api/getPreAuthKey` - Get pre-auth keys
+- `/Api/getLogs` - Get activity logs
+- `/Api/initData` - Initialize dashboard data
+
+See `postgres/postgres.sql` for the complete API list.
+
+## Troubleshooting
+
+### Check service status
+```bash
+docker-compose ps
+```
+
+### View logs
+```bash
+# All services
+docker-compose logs -f
+
+# Specific service
+docker-compose logs -f php
+docker-compose logs -f nginx
+docker-compose logs -f postgres
+```
+
+### Restart services
+```bash
+docker-compose restart
+```
+
+### Database connection issues
+
+1. Ensure PostgreSQL is running:
+   ```bash
+   docker-compose ps postgres
+   ```
+
+2. Check database connectivity:
+   ```bash
+   docker-compose exec postgres psql -U postgres -d headscale -c "SELECT version();"
+   ```
+
+### Port conflicts
+
+If port 8080 or 5432 is in use, edit `docker-compose.yml`:
+
+```yaml
+ports:
+  - "8081:80"  # Change external port
+```
+
+## Stopping the Application
+
+```bash
+./stop.sh
+```
+
+Or manually:
+```bash
+docker-compose down
+```
+
+To remove all data including database:
+```bash
+docker-compose down -v
+```
 
 ## Credits
 
-This is a modern English rewrite of the original [Headscale-Admin](https://github.com/arounyf/headscale-Admin) project by arounyf.
+This project is based on [Headscale-Admin](https://github.com/arounyf/headscale-Admin) by arounyf.
 
 ## License
 
-This project is open source and available under the MIT License
-
-
-
-
-
-
+This project is open source and available under the MIT License.
