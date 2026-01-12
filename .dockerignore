@@ -14,3 +14,9 @@ tsconfig.json
 vite.config.ts
 tailwind.config.js
 postcss.config.js
+README.md
+SETUP.md
+MIGRATION.md
+start.sh
+stop.sh
+.gitignore

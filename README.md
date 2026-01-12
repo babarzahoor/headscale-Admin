@@ -184,9 +184,10 @@ The PostgreSQL database includes these tables:
 .
 ├── docker-compose.yml       # Docker Compose configuration
 ├── Dockerfile              # PHP container image
+├── docker-start.sh         # Container startup script
 ├── nginx-php.conf          # Nginx configuration
-├── start.sh                # Quick start script
-├── stop.sh                 # Stop script
+├── start.sh                # Quick start script (host)
+├── stop.sh                 # Stop script (host)
 ├── SETUP.md                # Detailed setup guide
 ├── think-app/              # PHP application
 │   ├── .env               # Application configuration
@@ -222,6 +223,26 @@ The application provides these API endpoints:
 - `/Api/initData` - Initialize dashboard data
 
 See `postgres/postgres.sql` for the complete API list.
+
+## Container Startup Process
+
+The `docker-start.sh` script handles the container initialization:
+
+1. **Starts PHP-FPM** - Launches PHP FastCGI Process Manager in daemon mode
+2. **Verifies PHP-FPM** - Checks that PHP-FPM process is running
+3. **Database Connection** - Waits for PostgreSQL to be ready (up to 60 seconds)
+4. **ThinkPHP Server** - Starts the application server on port 8000
+
+The script includes:
+- Automatic retry logic for database connections
+- Clear status messages during startup
+- Graceful error handling
+- Proper signal handling for clean shutdown
+
+You can view the startup logs:
+```bash
+docker-compose logs -f php
+```
 
 ## Troubleshooting
 

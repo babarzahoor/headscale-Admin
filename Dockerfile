@@ -31,8 +31,11 @@ RUN composer require topthink/think-captcha
 RUN apk add libpq-dev
 RUN docker-php-ext-install pgsql pdo_pgsql pdo
 
+# Copy startup script
+COPY docker-start.sh /usr/local/bin/docker-start.sh
+RUN chmod +x /usr/local/bin/docker-start.sh
 
-RUN php-fpm &
-ENTRYPOINT ["/usr/local/bin/php"]
-CMD ["think","run"]
+WORKDIR /var/www/html
+
+ENTRYPOINT ["/usr/local/bin/docker-start.sh"]
 
